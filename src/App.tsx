@@ -7,6 +7,7 @@ import { Layout } from "./components/Layout";
 import Feed from "./pages/Feed";
 import Explore from "./pages/Explore";
 import Communities from "./pages/Communities";
+import CommunityDetails from "./pages/CommunityDetails";
 import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
@@ -26,6 +27,7 @@ const App = () => (
             <Route index element={<Feed />} />
             <Route path="explore" element={<Explore />} />
             <Route path="communities" element={<Communities />} />
+            <Route path="communities/:id" element={<CommunityDetails />} />
             <Route path="profile" element={<Profile />} />
             <Route path="messages" element={<Messages />} />
             <Route path="notifications" element={<Notifications />} />

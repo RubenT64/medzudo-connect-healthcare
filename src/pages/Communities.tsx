@@ -4,8 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 export default function Communities() {
+  const navigate = useNavigate();
+
+  const handleCommunityClick = (id: string) => {
+    navigate(`/communities/${id}`);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -59,55 +66,65 @@ export default function Communities() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
                 { 
-                  name: "Enhanced Community Test 1756911",
-                  type: "Community",
-                  members: 2,
-                  description: "This community tests the complete flow with improved logging, navigation, and ...",
-                  gradient: "from-orange-300 to-pink-300",
+                  id: "1",
+                  name: "Kardiologie Experten",
+                  type: "Fachgesellschaft",
+                  members: 1247,
+                  description: "Eine Community für Kardiologen, Herzchirurgen und alle, die sich für Herzmedizin interessieren.",
+                  gradient: "from-red-400 to-pink-500",
                   privacy: "public"
                 },
                 { 
-                  name: "Studienplatztausch",
+                  id: "2",
+                  name: "Notfallmedizin Deutschland",
                   type: "Community",
-                  members: 2,
-                  description: "Wie helfen Studenten beim studienplatz suche.",
-                  gradient: "from-pink-300 to-pink-300",
+                  members: 892,
+                  description: "Austausch und Weiterbildung für Notfallmediziner, Rettungsdienstler und Intensivmediziner.",
+                  gradient: "from-orange-400 to-red-500",
                   privacy: "public"
                 },
                 { 
-                  name: "FINAL TEST Community 1756911",
+                  id: "3",
+                  name: "Chirurgie Innovation",
                   type: "Community",
-                  members: 2,
-                  description: "This community was created to test the final optimized flow with trigger only",
-                  gradient: "from-purple-300 to-blue-300",
+                  members: 634,
+                  description: "Neueste Entwicklungen in der Chirurgie - von Robotik bis minimalinvasive Techniken.",
+                  gradient: "from-blue-400 to-purple-500",
                   privacy: "public"
                 },
                 { 
-                  name: "TEST Community 1756911233",
-                  type: "Community",
-                  members: 2,
-                  description: "This is a test community to verify the creation process",
-                  gradient: "from-green-300 to-yellow-300",
+                  id: "4",
+                  name: "Medizinstudenten Hamburg",
+                  type: "Semester",
+                  members: 458,
+                  description: "Lokale Community für Medizinstudenten in Hamburg - Lerntreffs, Austausch, Events.",
+                  gradient: "from-green-400 to-blue-500",
                   privacy: "private"
                 },
                 { 
-                  name: "Zahn Community",
-                  type: "Community",
-                  members: 2,
-                  description: "Für Porsche Fahrer und Golfspieler",
-                  gradient: "from-cyan-300 to-teal-300",
+                  id: "5",
+                  name: "Radiologie Fortbildung",
+                  type: "Bildungseinrichtung",
+                  members: 723,
+                  description: "Fortbildungen und Fallbesprechungen in der diagnostischen und interventionellen Radiologie.",
+                  gradient: "from-purple-400 to-pink-500",
                   privacy: "public"
                 },
                 { 
-                  name: "Notfall Medizin",
-                  type: "Community",
-                  members: 2,
-                  description: "Für Porsche Fahrer und Golfspieler",
-                  gradient: "from-red-300 to-orange-300",
+                  id: "6",
+                  name: "Praxis Management",
+                  type: "Praxis/MVZ",
+                  members: 312,
+                  description: "Tipps und Tricks für erfolgreiches Praxismanagement - von Abrechnung bis Patientenbetreuung.",
+                  gradient: "from-teal-400 to-green-500",
                   privacy: "hidden"
                 }
               ].map((community, i) => (
-                <Card key={i} className="shadow-soft overflow-hidden hover:shadow-medical transition-all duration-200 group">
+                <Card 
+                  key={i} 
+                  className="shadow-soft overflow-hidden hover:shadow-medical transition-all duration-200 group cursor-pointer"
+                  onClick={() => handleCommunityClick(community.id)}
+                >
                   {/* Header with gradient background */}
                   <div className={`h-24 bg-gradient-to-br ${community.gradient} relative`}>
                     <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors" />
