@@ -17,6 +17,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { EventCard } from "@/components/EventCard";
+import { MediaSection } from "@/components/MediaSection";
+import { MembersSection } from "@/components/MembersSection";
+import { PostCreator } from "@/components/PostCreator";
+import { CommentSection } from "@/components/CommentSection";
 
 export default function CommunityDetails() {
   const { id } = useParams();
@@ -88,10 +93,16 @@ export default function CommunityDetails() {
       date: "2024-12-15",
       time: "09:00",
       location: "München",
-      type: "Präsenz",
+      type: "Präsenz" as const,
       attendees: 45,
       maxAttendees: 100,
-      description: "Jährliches Update zu aktuellen Entwicklungen in der Kardiologie"
+      description: "Jährliches Update zu aktuellen Entwicklungen in der Kardiologie mit renommierten Experten aus der gesamten DACH-Region.",
+      coverImage: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=200&fit=crop&crop=center",
+      organizer: {
+        name: "Dr. Weber",
+        avatar: "MW"
+      },
+      isAttending: false
     },
     {
       id: 2,
@@ -99,10 +110,32 @@ export default function CommunityDetails() {
       date: "2024-12-20",
       time: "19:00",
       location: "Online",
-      type: "Virtual",
+      type: "Virtual" as const,
       attendees: 89,
       maxAttendees: 200,
-      description: "Interaktive Fallbesprechung komplexer kardiologischer Fälle"
+      description: "Interaktive Fallbesprechung komplexer kardiologischer Fälle mit Live-Diskussion und Q&A-Session.",
+      organizer: {
+        name: "Dr. Klein",
+        avatar: "SK"
+      },
+      isAttending: true
+    },
+    {
+      id: 3,
+      title: "Interventionelle Kardiologie Workshop",
+      date: "2024-12-25",
+      time: "14:00",
+      location: "Hamburg",
+      type: "Hybrid" as const,
+      attendees: 32,
+      maxAttendees: 80,
+      description: "Hands-on Workshop zu modernsten Techniken in der interventionellen Kardiologie.",
+      coverImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=200&fit=crop&crop=center",
+      organizer: {
+        name: "Prof. Müller",
+        avatar: "LM"
+      },
+      isAttending: false
     }
   ];
 
@@ -110,7 +143,7 @@ export default function CommunityDetails() {
     {
       id: 1,
       name: "Dr. Sarah Klein",
-      role: "member",
+      role: "member" as const,
       title: "Kardiologin",
       location: "Berlin",
       joinDate: "2023-01-15",
@@ -122,7 +155,7 @@ export default function CommunityDetails() {
     {
       id: 2,
       name: "Prof. Dr. Michael Weber",
-      role: "moderator",
+      role: "moderator" as const,
       title: "Herzchirurg",
       location: "München",
       joinDate: "2022-03-20",
@@ -134,7 +167,7 @@ export default function CommunityDetails() {
     {
       id: 3,
       name: "Dr. Lisa Müller",
-      role: "founder",
+      role: "founder" as const,
       title: "Oberärztin Kardiologie",
       location: "Hamburg",
       joinDate: "2020-01-01",
@@ -149,7 +182,7 @@ export default function CommunityDetails() {
     {
       id: 1,
       name: "EKG_Beispiele_2024.pdf",
-      type: "document",
+      type: "document" as const,
       size: "2.4 MB",
       uploadedBy: "Dr. Sarah Klein",
       uploadDate: "2024-01-10",
@@ -158,11 +191,20 @@ export default function CommunityDetails() {
     {
       id: 2,
       name: "Herzchirurgie_OP_Video.mp4",
-      type: "video",
+      type: "video" as const,
       size: "156 MB",
       uploadedBy: "Prof. Dr. Weber",
       uploadDate: "2024-01-08",
       downloads: 234
+    },
+    {
+      id: 3,
+      name: "Cardiac_MRI_Images.jpg",
+      type: "image" as const,
+      size: "8.4 MB",
+      uploadedBy: "Dr. Klein",
+      uploadDate: "2024-01-12",
+      downloads: 156
     }
   ];
 
@@ -367,39 +409,11 @@ export default function CommunityDetails() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
                   {/* Create Post */}
-                  <Card className="shadow-soft">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="h-10 w-10 rounded-full bg-gradient-medical flex items-center justify-center">
-                          <span className="text-white font-semibold">RT</span>
-                        </div>
-                        <div className="flex-1">
-                          <Textarea
-                            placeholder="Teilen Sie Ihr Wissen mit der Community..."
-                            value={newPost}
-                            onChange={(e) => setNewPost(e.target.value)}
-                            className="border-0 bg-muted/30 resize-none"
-                            rows={3}
-                          />
-                          <div className="flex items-center justify-between mt-4">
-                            <div className="flex gap-2">
-                              <Button variant="ghost" size="sm" className="gap-2">
-                                <Image className="h-4 w-4" />
-                                Bild
-                              </Button>
-                              <Button variant="ghost" size="sm" className="gap-2">
-                                <FileText className="h-4 w-4" />
-                                Dokument
-                              </Button>
-                            </div>
-                            <Button variant="medical" size="sm" disabled={!newPost.trim()}>
-                              Posten
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <PostCreator
+                    onCreatePost={(post) => {
+                      console.log("Creating post:", post);
+                    }}
+                  />
 
                   {/* Posts */}
                   {posts.map((post) => (
@@ -483,6 +497,13 @@ export default function CommunityDetails() {
                             <Bookmark className="h-4 w-4" />
                           </Button>
                         </div>
+                        
+                        {/* Comments Section */}
+                        <CommentSection 
+                          postId={post.id}
+                          isOpen={false}
+                          onClose={() => {}}
+                        />
                       </CardContent>
                     </Card>
                   ))}
@@ -556,183 +577,34 @@ export default function CommunityDetails() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {events.map((event) => (
-                  <Card key={event.id} className="shadow-soft">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-lg">{event.title}</CardTitle>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              <span>{event.date}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-4 w-4" />
-                              <span>{event.time}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <Badge variant={event.type === "Virtual" ? "secondary" : "default"}>
-                          {event.type === "Virtual" ? (
-                            <><Video className="h-3 w-3 mr-1" />Online</>
-                          ) : (
-                            <><MapPin className="h-3 w-3 mr-1" />Präsenz</>
-                          )}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground mb-4">{event.description}</p>
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm text-muted-foreground">
-                          <Users className="h-4 w-4 inline mr-1" />
-                          {event.attendees}/{event.maxAttendees} Teilnehmer
-                        </div>
-                        <Button variant="outline" size="sm">Teilnehmen</Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <EventCard 
+                    key={event.id} 
+                    event={event}
+                    onAttendanceChange={(eventId, attending) => {
+                      console.log(`Event ${eventId}: ${attending ? 'attending' : 'not attending'}`);
+                    }}
+                  />
                 ))}
               </div>
             </TabsContent>
 
             {/* Media Tab */}
-            <TabsContent value="media" className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Input placeholder="Medien suchen..." className="w-80" />
-                  <Select defaultValue="all">
-                    <SelectTrigger className="w-48">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Alle Dateien</SelectItem>
-                      <SelectItem value="documents">Dokumente</SelectItem>
-                      <SelectItem value="images">Bilder</SelectItem>
-                      <SelectItem value="videos">Videos</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button variant="medical" className="gap-2">
-                  <Upload className="h-4 w-4" />
-                  Datei hochladen
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {mediaFiles.map((file) => (
-                  <Card key={file.id} className="shadow-soft">
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        <div className="h-10 w-10 rounded bg-accent/10 flex items-center justify-center">
-                          {file.type === "document" && <FileText className="h-5 w-5 text-accent" />}
-                          {file.type === "video" && <Video className="h-5 w-5 text-accent" />}
-                          {file.type === "image" && <Image className="h-5 w-5 text-accent" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium truncate">{file.name}</h4>
-                          <p className="text-sm text-muted-foreground">{file.size}</p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Von {file.uploadedBy} • {file.uploadDate}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between mt-4">
-                        <span className="text-xs text-muted-foreground">
-                          {file.downloads} Downloads
-                        </span>
-                        <Button variant="ghost" size="sm" className="gap-2">
-                          <Download className="h-3 w-3" />
-                          Download
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+            <TabsContent value="media">
+              <MediaSection 
+                files={mediaFiles}
+                onUpload={() => console.log("Upload triggered")}
+                onCreateFolder={() => console.log("Create folder triggered")}
+              />
             </TabsContent>
 
             {/* Members Tab */}
-            <TabsContent value="members" className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Input placeholder="Mitglieder suchen..." className="w-80" />
-                  <Select defaultValue="all">
-                    <SelectTrigger className="w-48">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Alle Mitglieder</SelectItem>
-                      <SelectItem value="founders">Gründer</SelectItem>
-                      <SelectItem value="moderators">Moderatoren</SelectItem>
-                      <SelectItem value="members">Mitglieder</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                {(community.userRole === "founder" || community.userRole === "moderator") && (
-                  <Button variant="medical" className="gap-2">
-                    <UserPlus className="h-4 w-4" />
-                    Einladen
-                  </Button>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {members.map((member) => (
-                  <Card key={member.id} className="shadow-soft">
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        <div className="relative">
-                          <div className="h-12 w-12 rounded-full bg-gradient-community flex items-center justify-center">
-                            <span className="text-white font-semibold">{member.avatar}</span>
-                          </div>
-                          {member.online && (
-                            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-green-500 rounded-full ring-2 ring-background" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-medium truncate">{member.name}</h4>
-                            {member.verified && <Badge variant="secondary" className="text-xs">✓</Badge>}
-                            {getRoleIcon(member.role)}
-                          </div>
-                          <p className="text-sm text-muted-foreground">{member.title}</p>
-                          <p className="text-xs text-muted-foreground">{member.location}</p>
-                          <div className="flex items-center gap-1 mt-2">
-                            {getRoleBadge(member.role)}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
-                        <div className="text-xs text-muted-foreground">
-                          {member.posts} Posts • Seit {member.joinDate}
-                        </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem>Profil ansehen</DropdownMenuItem>
-                            <DropdownMenuItem>Nachricht senden</DropdownMenuItem>
-                            {(community.userRole === "founder" || community.userRole === "moderator") && member.role === "member" && (
-                              <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>Zu Moderator machen</DropdownMenuItem>
-                                <DropdownMenuItem className="text-destructive">Entfernen</DropdownMenuItem>
-                              </>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+            <TabsContent value="members">
+              <MembersSection 
+                members={members}
+                currentUserRole={community.userRole}
+              />
             </TabsContent>
 
             {/* Sub-Communities Tab */}
